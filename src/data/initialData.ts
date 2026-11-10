@@ -1,10 +1,27 @@
+import heroCoutureImg from '../assets/images/hero_nigerian_couture_1794315053157.jpg';
+import atelierStudioImg from '../assets/images/atelier_craftsmanship_studio_1794315050886.jpg';
+import asoEbiLaceImg from '../assets/images/collection_aso_ebi_lace_1794315051320.jpg';
+import ankaraContemporaryImg from '../assets/images/collection_ankara_contemporary_1794315053123.jpg';
+import bridalCoutureImg from '../assets/images/collection_bridal_corporate_1794315053276.jpg';
+
 export const BRAND_IMAGES = {
-  heroCouture: '/src/assets/images/hero_nigerian_couture_1794315053157.jpg',
-  atelierStudio: '/src/assets/images/atelier_craftsmanship_studio_1794315050886.jpg',
-  asoEbiLace: '/src/assets/images/collection_aso_ebi_lace_1794315051320.jpg',
-  ankaraContemporary: '/src/assets/images/collection_ankara_contemporary_1794315053123.jpg',
-  bridalCouture: '/src/assets/images/collection_bridal_corporate_1794315053276.jpg',
+  heroCouture: heroCoutureImg,
+  atelierStudio: atelierStudioImg,
+  asoEbiLace: asoEbiLaceImg,
+  ankaraContemporary: ankaraContemporaryImg,
+  bridalCouture: bridalCoutureImg,
 };
+
+export function resolveBrandImageUrl(url: string): string {
+  if (!url) return '';
+  if (url.includes('hero_nigerian_couture_1794315053157')) return BRAND_IMAGES.heroCouture;
+  if (url.includes('atelier_craftsmanship_studio_1794315050886')) return BRAND_IMAGES.atelierStudio;
+  if (url.includes('collection_aso_ebi_lace_1794315051320')) return BRAND_IMAGES.asoEbiLace;
+  if (url.includes('collection_ankara_contemporary_1794315053123')) return BRAND_IMAGES.ankaraContemporary;
+  if (url.includes('collection_bridal_corporate_1794315053276')) return BRAND_IMAGES.bridalCouture;
+  return url;
+}
+
 
 export interface CollectionItem {
   id: string;

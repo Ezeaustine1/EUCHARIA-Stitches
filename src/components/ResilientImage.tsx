@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Scissors } from 'lucide-react';
+import { resolveBrandImageUrl } from '../data/initialData.ts';
 
 interface ResilientImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -14,9 +15,14 @@ export const ResilientImage: React.FC<ResilientImageProps> = ({
   className = '',
   ...props
 }) => {
+  const resolvedSrc = resolveBrandImageUrl(src);
   const [hasError, setHasError] = useState(false);
 
-  if (hasError || !src) {
+  useEffect(() => {
+    setHasError(false);
+  }, [resolvedSrc]);
+
+  if (hasError || !resolvedSrc) {
     return (
       <div
         className={`flex flex-col items-center justify-center bg-gradient-to-br from-[#2C211D] via-[#1A1412] to-[#3B2C26] text-[#F5EFE6] p-6 text-center select-none ${className}`}
@@ -36,12 +42,12 @@ export const ResilientImage: React.FC<ResilientImageProps> = ({
 
   return (
     <img
-      src={src}
+      src={resolvedSrc}
       alt={alt}
-      referrerPolicy="no-referrer"
       onError={() => setHasError(true)}
       className={className}
       {...props}
     />
   );
 };
+
