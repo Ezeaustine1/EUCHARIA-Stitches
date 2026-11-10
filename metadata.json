@@ -1,0 +1,6 @@
+{
+  "name": "EUCHARIA Stitches",
+  "description": "Luxury bespoke fashion design, tailoring, Aso-Ebi, bridal couture, and custom clothing showroom in Ado Ekiti, Nigeria.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

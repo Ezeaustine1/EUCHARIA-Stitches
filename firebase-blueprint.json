@@ -1,0 +1,188 @@
+{
+  "entities": {
+    "CollectionItem": {
+      "title": "CollectionItem",
+      "description": "A fashion outfit or garment in the EUCHARIA Stitches showroom collections.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 2, "maxLength": 120, "description": "Design title or outfit name" },
+        "category": { "type": "string", "minLength": 2, "maxLength": 80, "description": "Fashion category" },
+        "description": { "type": "string", "minLength": 5, "maxLength": 1000, "description": "Short editorial description" },
+        "imageUrl": { "type": "string", "minLength": 5, "maxLength": 800000, "description": "Photograph URL or data URI" },
+        "priceEstimate": { "type": "string", "minLength": 1, "maxLength": 60, "description": "Starting price indicator in NGN" },
+        "featured": { "type": "boolean", "description": "Whether featured on the homepage" },
+        "createdAt": { "type": "string", "minLength": 1, "maxLength": 60, "description": "ISO timestamp" }
+      },
+      "required": ["title", "category", "description", "imageUrl", "priceEstimate", "featured", "createdAt"]
+    },
+    "ServiceItem": {
+      "title": "ServiceItem",
+      "description": "A professional tailoring or fashion design service offered by EUCHARIA Stitches.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "minLength": 2, "maxLength": 120, "description": "Service name" },
+        "description": { "type": "string", "minLength": 5, "maxLength": 1000, "description": "Service explanation" },
+        "imageUrl": { "type": "string", "minLength": 5, "maxLength": 800000, "description": "Service photograph" },
+        "startingPrice": { "type": "string", "minLength": 1, "maxLength": 60, "description": "Indicative starting price" },
+        "turnaroundTime": { "type": "string", "minLength": 1, "maxLength": 80, "description": "Estimated completion timeframe" }
+      },
+      "required": ["title", "description", "imageUrl", "startingPrice", "turnaroundTime"]
+    },
+    "GalleryPhoto": {
+      "title": "GalleryPhoto",
+      "description": "Completed bespoke garment portfolio photograph.",
+      "type": "object",
+      "properties": {
+        "caption": { "type": "string", "minLength": 2, "maxLength": 200, "description": "Short caption of the work" },
+        "category": { "type": "string", "minLength": 2, "maxLength": 80, "description": "Clothing category" },
+        "imageUrl": { "type": "string", "minLength": 5, "maxLength": 800000, "description": "High-res image URL or data URI" },
+        "featured": { "type": "boolean", "description": "Featured in portfolio highlights" },
+        "createdAt": { "type": "string", "minLength": 1, "maxLength": 60, "description": "ISO timestamp" }
+      },
+      "required": ["caption", "category", "imageUrl", "featured", "createdAt"]
+    },
+    "OrderEnquiry": {
+      "title": "OrderEnquiry",
+      "description": "Customer appointment booking and bespoke outfit order enquiry.",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "phone": { "type": "string", "minLength": 5, "maxLength": 40 },
+        "whatsapp": { "type": "string", "minLength": 5, "maxLength": 40 },
+        "email": { "type": "string", "maxLength": 120 },
+        "outfitType": { "type": "string", "minLength": 2, "maxLength": 150 },
+        "category": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "occasion": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "preferredFabric": { "type": "string", "maxLength": 150 },
+        "preferredColor": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "appointmentDate": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "deliveryDate": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "instructions": { "type": "string", "maxLength": 2000 },
+        "inspirationImage": { "type": "string", "maxLength": 800000 },
+        "status": { "type": "string", "enum": ["New", "Contacted", "In Progress", "Completed", "Cancelled"] },
+        "createdAt": { "type": "string", "minLength": 1, "maxLength": 60 }
+      },
+      "required": [
+        "fullName",
+        "phone",
+        "whatsapp",
+        "email",
+        "outfitType",
+        "category",
+        "occasion",
+        "preferredFabric",
+        "preferredColor",
+        "appointmentDate",
+        "deliveryDate",
+        "instructions",
+        "inspirationImage",
+        "status",
+        "createdAt"
+      ]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "Direct message from the Contact Us page.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "phone": { "type": "string", "minLength": 5, "maxLength": 40 },
+        "email": { "type": "string", "maxLength": 120 },
+        "subject": { "type": "string", "minLength": 2, "maxLength": 150 },
+        "message": { "type": "string", "minLength": 5, "maxLength": 2000 },
+        "status": { "type": "string", "enum": ["Unread", "Read", "Replied"] },
+        "createdAt": { "type": "string", "minLength": 1, "maxLength": 60 }
+      },
+      "required": ["name", "phone", "email", "subject", "message", "status", "createdAt"]
+    },
+    "Testimonial": {
+      "title": "Testimonial",
+      "description": "Customer testimonial moderated by the administrator.",
+      "type": "object",
+      "properties": {
+        "customerName": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "roleOrOccasion": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "review": { "type": "string", "minLength": 10, "maxLength": 1000 },
+        "rating": { "type": "number" },
+        "photoUrl": { "type": "string", "maxLength": 800000 },
+        "approved": { "type": "boolean" },
+        "isSample": { "type": "boolean" },
+        "createdAt": { "type": "string", "minLength": 1, "maxLength": 60 }
+      },
+      "required": ["customerName", "roleOrOccasion", "review", "rating", "photoUrl", "approved", "isSample", "createdAt"]
+    },
+    "NewsletterSubscriber": {
+      "title": "NewsletterSubscriber",
+      "description": "Newsletter subscription entry.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "minLength": 5, "maxLength": 120 },
+        "createdAt": { "type": "string", "minLength": 1, "maxLength": 60 }
+      },
+      "required": ["email", "createdAt"]
+    },
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Admin-editable business settings, hours, social links, hero text, and delivery policies.",
+      "type": "object",
+      "properties": {
+        "whatsappNumber": { "type": "string", "minLength": 5, "maxLength": 40 },
+        "altPhoneNumber": { "type": "string", "minLength": 5, "maxLength": 40 },
+        "address": { "type": "string", "minLength": 5, "maxLength": 250 },
+        "openingHours": { "type": "string", "minLength": 5, "maxLength": 500 },
+        "instagramUrl": { "type": "string", "maxLength": 250 },
+        "facebookUrl": { "type": "string", "maxLength": 250 },
+        "heroHeadline": { "type": "string", "minLength": 3, "maxLength": 150 },
+        "heroSubtext": { "type": "string", "minLength": 10, "maxLength": 500 },
+        "deliveryPolicy": { "type": "string", "minLength": 10, "maxLength": 2000 },
+        "updatedAt": { "type": "string", "minLength": 1, "maxLength": 60 }
+      },
+      "required": [
+        "whatsappNumber",
+        "altPhoneNumber",
+        "address",
+        "openingHours",
+        "instagramUrl",
+        "facebookUrl",
+        "heroHeadline",
+        "heroSubtext",
+        "deliveryPolicy",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/collections/{itemId}": {
+      "schema": { "$ref": "#/entities/CollectionItem" },
+      "description": "Showroom clothing collection items"
+    },
+    "/services/{serviceId}": {
+      "schema": { "$ref": "#/entities/ServiceItem" },
+      "description": "Tailoring and bespoke fashion services"
+    },
+    "/gallery/{photoId}": {
+      "schema": { "$ref": "#/entities/GalleryPhoto" },
+      "description": "Completed garment portfolio gallery"
+    },
+    "/enquiries/{enquiryId}": {
+      "schema": { "$ref": "#/entities/OrderEnquiry" },
+      "description": "Customer appointment and bespoke order enquiries"
+    },
+    "/contactMessages/{msgId}": {
+      "schema": { "$ref": "#/entities/ContactMessage" },
+      "description": "Direct messages submitted via Contact Us"
+    },
+    "/testimonials/{reviewId}": {
+      "schema": { "$ref": "#/entities/Testimonial" },
+      "description": "Customer reviews with admin approval workflow"
+    },
+    "/newsletterSubscribers/{subId}": {
+      "schema": { "$ref": "#/entities/NewsletterSubscriber" },
+      "description": "Lookbook and seasonal collection newsletter subscribers"
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/SiteSettings" },
+      "description": "Global site configuration and policies"
+    }
+  }
+}

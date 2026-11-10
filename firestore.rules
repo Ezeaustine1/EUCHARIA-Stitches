@@ -1,0 +1,230 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // 2. Hardened Global Helpers
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        (request.auth.token.email == 'ezehaustine1@gmail.com' && request.auth.token.email_verified == true) ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // 3. Entity Validation Blueprints
+    function isValidCollectionItem(data) {
+      return data.keys().hasAll(['title', 'category', 'description', 'imageUrl', 'priceEstimate', 'featured', 'createdAt']) &&
+             data.keys().hasOnly(['title', 'category', 'description', 'imageUrl', 'priceEstimate', 'featured', 'createdAt']) &&
+             data.title is string && data.title.size() >= 2 && data.title.size() <= 120 &&
+             data.category is string && data.category.size() >= 2 && data.category.size() <= 80 &&
+             data.description is string && data.description.size() >= 5 && data.description.size() <= 1000 &&
+             data.imageUrl is string && data.imageUrl.size() >= 5 && data.imageUrl.size() <= 800000 &&
+             data.priceEstimate is string && data.priceEstimate.size() >= 1 && data.priceEstimate.size() <= 60 &&
+             data.featured is bool &&
+             data.createdAt is string && data.createdAt.size() >= 1 && data.createdAt.size() <= 60;
+    }
+
+    function isValidServiceItem(data) {
+      return data.keys().hasAll(['title', 'description', 'imageUrl', 'startingPrice', 'turnaroundTime']) &&
+             data.keys().hasOnly(['title', 'description', 'imageUrl', 'startingPrice', 'turnaroundTime']) &&
+             data.title is string && data.title.size() >= 2 && data.title.size() <= 120 &&
+             data.description is string && data.description.size() >= 5 && data.description.size() <= 1000 &&
+             data.imageUrl is string && data.imageUrl.size() >= 5 && data.imageUrl.size() <= 800000 &&
+             data.startingPrice is string && data.startingPrice.size() >= 1 && data.startingPrice.size() <= 60 &&
+             data.turnaroundTime is string && data.turnaroundTime.size() >= 1 && data.turnaroundTime.size() <= 80;
+    }
+
+    function isValidGalleryPhoto(data) {
+      return data.keys().hasAll(['caption', 'category', 'imageUrl', 'featured', 'createdAt']) &&
+             data.keys().hasOnly(['caption', 'category', 'imageUrl', 'featured', 'createdAt']) &&
+             data.caption is string && data.caption.size() >= 2 && data.caption.size() <= 200 &&
+             data.category is string && data.category.size() >= 2 && data.category.size() <= 80 &&
+             data.imageUrl is string && data.imageUrl.size() >= 5 && data.imageUrl.size() <= 800000 &&
+             data.featured is bool &&
+             data.createdAt is string && data.createdAt.size() >= 1 && data.createdAt.size() <= 60;
+    }
+
+    function isValidOrderEnquiry(data) {
+      return data.keys().hasAll([
+               'fullName', 'phone', 'whatsapp', 'email', 'outfitType', 'category',
+               'occasion', 'preferredFabric', 'preferredColor', 'appointmentDate',
+               'deliveryDate', 'instructions', 'inspirationImage', 'status', 'createdAt'
+             ]) &&
+             data.keys().hasOnly([
+               'fullName', 'phone', 'whatsapp', 'email', 'outfitType', 'category',
+               'occasion', 'preferredFabric', 'preferredColor', 'appointmentDate',
+               'deliveryDate', 'instructions', 'inspirationImage', 'status', 'createdAt'
+             ]) &&
+             data.fullName is string && data.fullName.size() >= 2 && data.fullName.size() <= 120 &&
+             data.phone is string && data.phone.size() >= 5 && data.phone.size() <= 40 &&
+             data.whatsapp is string && data.whatsapp.size() >= 5 && data.whatsapp.size() <= 40 &&
+             data.email is string && data.email.size() <= 120 &&
+             data.outfitType is string && data.outfitType.size() >= 2 && data.outfitType.size() <= 150 &&
+             data.category is string && data.category.size() >= 2 && data.category.size() <= 80 &&
+             data.occasion is string && data.occasion.size() >= 2 && data.occasion.size() <= 100 &&
+             data.preferredFabric is string && data.preferredFabric.size() <= 150 &&
+             data.preferredColor is string && data.preferredColor.size() >= 1 && data.preferredColor.size() <= 100 &&
+             data.appointmentDate is string && data.appointmentDate.size() >= 1 && data.appointmentDate.size() <= 40 &&
+             data.deliveryDate is string && data.deliveryDate.size() >= 1 && data.deliveryDate.size() <= 40 &&
+             data.instructions is string && data.instructions.size() <= 2000 &&
+             data.inspirationImage is string && data.inspirationImage.size() <= 800000 &&
+             data.status is string && data.status in ['New', 'Contacted', 'In Progress', 'Completed', 'Cancelled'] &&
+             data.createdAt is string && data.createdAt.size() >= 1 && data.createdAt.size() <= 60;
+    }
+
+    function isValidContactMessage(data) {
+      return data.keys().hasAll(['name', 'phone', 'email', 'subject', 'message', 'status', 'createdAt']) &&
+             data.keys().hasOnly(['name', 'phone', 'email', 'subject', 'message', 'status', 'createdAt']) &&
+             data.name is string && data.name.size() >= 2 && data.name.size() <= 120 &&
+             data.phone is string && data.phone.size() >= 5 && data.phone.size() <= 40 &&
+             data.email is string && data.email.size() <= 120 &&
+             data.subject is string && data.subject.size() >= 2 && data.subject.size() <= 150 &&
+             data.message is string && data.message.size() >= 5 && data.message.size() <= 2000 &&
+             data.status is string && data.status in ['Unread', 'Read', 'Replied'] &&
+             data.createdAt is string && data.createdAt.size() >= 1 && data.createdAt.size() <= 60;
+    }
+
+    function isValidTestimonial(data) {
+      return data.keys().hasAll(['customerName', 'roleOrOccasion', 'review', 'rating', 'photoUrl', 'approved', 'isSample', 'createdAt']) &&
+             data.keys().hasOnly(['customerName', 'roleOrOccasion', 'review', 'rating', 'photoUrl', 'approved', 'isSample', 'createdAt']) &&
+             data.customerName is string && data.customerName.size() >= 2 && data.customerName.size() <= 100 &&
+             data.roleOrOccasion is string && data.roleOrOccasion.size() >= 2 && data.roleOrOccasion.size() <= 100 &&
+             data.review is string && data.review.size() >= 10 && data.review.size() <= 1000 &&
+             data.rating is number && data.rating >= 1 && data.rating <= 5 &&
+             data.photoUrl is string && data.photoUrl.size() <= 800000 &&
+             data.approved is bool &&
+             data.isSample is bool &&
+             data.createdAt is string && data.createdAt.size() >= 1 && data.createdAt.size() <= 60;
+    }
+
+    function isValidSubscriber(data) {
+      return data.keys().hasAll(['email', 'createdAt']) &&
+             data.keys().hasOnly(['email', 'createdAt']) &&
+             data.email is string && data.email.size() >= 5 && data.email.size() <= 120 &&
+             data.createdAt is string && data.createdAt.size() >= 1 && data.createdAt.size() <= 60;
+    }
+
+    function isValidSiteSettings(data) {
+      return data.keys().hasAll([
+               'whatsappNumber', 'altPhoneNumber', 'address', 'openingHours',
+               'instagramUrl', 'facebookUrl', 'heroHeadline', 'heroSubtext',
+               'deliveryPolicy', 'updatedAt'
+             ]) &&
+             data.keys().hasOnly([
+               'whatsappNumber', 'altPhoneNumber', 'address', 'openingHours',
+               'instagramUrl', 'facebookUrl', 'heroHeadline', 'heroSubtext',
+               'deliveryPolicy', 'updatedAt'
+             ]) &&
+             data.whatsappNumber is string && data.whatsappNumber.size() >= 5 && data.whatsappNumber.size() <= 40 &&
+             data.altPhoneNumber is string && data.altPhoneNumber.size() >= 5 && data.altPhoneNumber.size() <= 40 &&
+             data.address is string && data.address.size() >= 5 && data.address.size() <= 250 &&
+             data.openingHours is string && data.openingHours.size() >= 5 && data.openingHours.size() <= 500 &&
+             data.instagramUrl is string && data.instagramUrl.size() <= 250 &&
+             data.facebookUrl is string && data.facebookUrl.size() <= 250 &&
+             data.heroHeadline is string && data.heroHeadline.size() >= 3 && data.heroHeadline.size() <= 150 &&
+             data.heroSubtext is string && data.heroSubtext.size() >= 10 && data.heroSubtext.size() <= 500 &&
+             data.deliveryPolicy is string && data.deliveryPolicy.size() >= 10 && data.deliveryPolicy.size() <= 2000 &&
+             data.updatedAt is string && data.updatedAt.size() >= 1 && data.updatedAt.size() <= 60;
+    }
+
+    // 4. Collection Match Blocks
+    match /admins/{adminId} {
+      allow get: if isSignedIn() && isValidId(adminId) && request.auth.uid == adminId;
+      allow list, create, update, delete: if false;
+    }
+
+    match /collections/{itemId} {
+      allow get: if isValidId(itemId);
+      allow list: if resource.data.title is string;
+      allow create: if isAdmin() && isValidId(itemId) && isValidCollectionItem(incoming());
+      allow update: if isAdmin() && isValidId(itemId) && isValidCollectionItem(incoming()) &&
+                    incoming().createdAt == existing().createdAt;
+      allow delete: if isAdmin() && isValidId(itemId);
+    }
+
+    match /services/{serviceId} {
+      allow get: if isValidId(serviceId);
+      allow list: if resource.data.title is string;
+      allow create: if isAdmin() && isValidId(serviceId) && isValidServiceItem(incoming());
+      allow update: if isAdmin() && isValidId(serviceId) && isValidServiceItem(incoming());
+      allow delete: if isAdmin() && isValidId(serviceId);
+    }
+
+    match /gallery/{photoId} {
+      allow get: if isValidId(photoId);
+      allow list: if resource.data.caption is string;
+      allow create: if isAdmin() && isValidId(photoId) && isValidGalleryPhoto(incoming());
+      allow update: if isAdmin() && isValidId(photoId) && isValidGalleryPhoto(incoming()) &&
+                    incoming().createdAt == existing().createdAt;
+      allow delete: if isAdmin() && isValidId(photoId);
+    }
+
+    match /enquiries/{enquiryId} {
+      // Strictly isolated PII: only Admin can read, list, update status, or delete
+      allow get: if isAdmin() && isValidId(enquiryId);
+      allow list: if isAdmin();
+      // Public visitors can submit new order/appointment enquiries with initial status 'New'
+      allow create: if isValidId(enquiryId) && isValidOrderEnquiry(incoming()) && incoming().status == 'New';
+      allow update: if isAdmin() && isValidId(enquiryId) && isValidOrderEnquiry(incoming()) &&
+                    incoming().createdAt == existing().createdAt &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['status']);
+      allow delete: if isAdmin() && isValidId(enquiryId);
+    }
+
+    match /contactMessages/{msgId} {
+      allow get: if isAdmin() && isValidId(msgId);
+      allow list: if isAdmin();
+      allow create: if isValidId(msgId) && isValidContactMessage(incoming()) && incoming().status == 'Unread';
+      allow update: if isAdmin() && isValidId(msgId) && isValidContactMessage(incoming()) &&
+                    incoming().createdAt == existing().createdAt &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['status']);
+      allow delete: if isAdmin() && isValidId(msgId);
+    }
+
+    match /testimonials/{reviewId} {
+      allow get: if isValidId(reviewId) && (resource.data.approved == true || isAdmin());
+      allow list: if resource.data.approved == true || isAdmin();
+      // Public customers can submit unapproved reviews, or Admin can seed/create reviews
+      allow create: if isValidId(reviewId) && isValidTestimonial(incoming()) &&
+                    ((incoming().approved == false && incoming().isSample == false) || isAdmin());
+      allow update: if isAdmin() && isValidId(reviewId) && isValidTestimonial(incoming()) &&
+                    incoming().createdAt == existing().createdAt &&
+                    incoming().diff(existing()).affectedKeys().hasOnly(['approved', 'customerName', 'roleOrOccasion', 'review', 'rating']);
+      allow delete: if isAdmin() && isValidId(reviewId);
+    }
+
+    match /newsletterSubscribers/{subId} {
+      allow get: if isAdmin() && isValidId(subId);
+      allow list: if isAdmin();
+      allow create: if isValidId(subId) && isValidSubscriber(incoming());
+      allow update: if false;
+      allow delete: if isAdmin() && isValidId(subId);
+    }
+
+    match /settings/{settingId} {
+      allow get: if isValidId(settingId);
+      allow list: if resource.data.whatsappNumber is string;
+      allow create, update: if isAdmin() && isValidId(settingId) && isValidSiteSettings(incoming());
+      allow delete: if false;
+    }
+  }
+}
